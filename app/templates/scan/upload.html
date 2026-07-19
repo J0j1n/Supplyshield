@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-4">Upload Project for Analysis</h2>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <form action="/scan/upload" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="project_name" class="form-label">Project Name</label>
+                        <input type="text" class="form-control" id="project_name" name="project_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Project Archive (.zip)</label>
+                        <input class="form-control" type="file" id="file" name="file" accept=".zip" required>
+                    </div>
+                    
+                    <div class="alert alert-info mb-4">
+                        <strong>Privacy Notice:</strong> Your source code will be automatically deleted after analysis. Only metadata and reports are retained.
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Start Secure Scan</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Supported Package Managers</h5>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>Python: <code>pip</code> (requirements.txt), <code>poetry</code> (pyproject.toml)</li>
+                    <li>Node.js: <code>npm</code> (package.json)</li>
+                    <li>Java: <code>maven</code> (pom.xml), <code>gradle</code> (build.gradle)</li>
+                    <li>Rust: <code>cargo</code> (Cargo.toml)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="hero-section text-center py-5 rounded-3 mb-5">
+    <h1 class="display-4 fw-bold">SupplyShield</h1>
+    <h2 class="h4 mb-3">AI-Powered Software Supply Chain Trust Platform</h2>
+    <p class="lead mb-4">Privacy-First. Evidence-Based. Explainable.</p>
+    <div class="d-flex justify-content-center gap-3">
+        <a href="/scan/upload" class="btn btn-primary btn-lg">Start Scan</a>
+        <a href="/dashboard" class="btn btn-outline-light btn-lg">View Dashboard</a>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 feature-card">
+            <div class="card-body">
+                <h5 class="card-title">🔍 Dependency Analysis</h5>
+                <p class="card-text">Scan Python, npm, Maven, Gradle, Cargo, and Poetry projects</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 feature-card">
+            <div class="card-body">
+                <h5 class="card-title">🛡️ Vulnerability Detection</h5>
+                <p class="card-text">Cross-reference NVD, GitHub Advisories, and OSV databases</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 feature-card">
+            <div class="card-body">
+                <h5 class="card-title">📋 SBOM Generation</h5>
+                <p class="card-text">Generate CycloneDX and SPDX compliant SBOMs</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 feature-card">
+            <div class="card-body">
+                <h5 class="card-title">🔒 Privacy First</h5>
+                <p class="card-text">Zero source code retention. Your code never stays on our servers</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="trust-index-section text-center mb-5">
+    <h3 class="mb-4">Supply Chain Trust Index (STI)</h3>
+    <div class="d-flex justify-content-center flex-wrap gap-2">
+        <span class="badge trust-badge trust-badge-enterprise fs-6">Enterprise (A)</span>
+        <span class="badge trust-badge trust-badge-trusted fs-6">Trusted (B)</span>
+        <span class="badge trust-badge trust-badge-moderate fs-6">Moderate (C)</span>
+        <span class="badge trust-badge trust-badge-high-risk fs-6">High Risk (D)</span>
+        <span class="badge trust-badge trust-badge-critical fs-6">Critical (F)</span>
+    </div>
+</div>
+
+<div class="how-it-works-section text-center mb-5">
+    <h3 class="mb-4">How it works</h3>
+    <div class="d-flex justify-content-center align-items-center flex-wrap gap-3">
+        <span class="fw-bold">Upload</span>
+        <span>&rarr;</span>
+        <span class="fw-bold">Scan</span>
+        <span>&rarr;</span>
+        <span class="fw-bold">Analyze</span>
+        <span>&rarr;</span>
+        <span class="fw-bold">Report</span>
+        <span>&rarr;</span>
+        <span class="fw-bold text-success">Delete Source Code</span>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+__pycache__
+*.pyc
+instance/
+uploads/
+workspaces/
+logs/
+.env
+*.db
+venv/
+.vscode/
+.idea/
+node_modules/
+dist/
+build/
+*.egg-info
