@@ -1,8 +1,9 @@
 import os
 import logging
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, render_template
 from config import config
 from app.extensions import db
+
 
 def create_app(config_name='development'):
     """Application factory for SupplyShield."""
@@ -29,6 +30,11 @@ def create_app(config_name='development'):
         format='%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
     )
     
+    # Create database tables
+    with app.app_context():
+        from app.models import scan as scan_models  # noqa: F401 — ensure models are registered
+        db.create_all()
+    
     # Register blueprints
     try:
         from app.core.scan_manager import scan_bp
@@ -44,9 +50,11 @@ def create_app(config_name='development'):
         
     # Main index blueprint
     main_bp = Blueprint('main', __name__)
+    
     @main_bp.route('/')
     def index():
-        return {"status": "SupplyShield API Running", "version": "0.1.0"}
+        return render_template('index.html')
+    
     app.register_blueprint(main_bp, url_prefix='/')
     
     return app
