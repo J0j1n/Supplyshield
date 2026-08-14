@@ -15,6 +15,7 @@ from app.core.scan_manager.validators import (
 from app.core.workspace.manager import WorkspaceManager
 from app.core.cleanup.engine import CleanupEngine
 from app.core.metadata_repo.repository import MetadataRepository
+from app.core.dependency_scanner import DependencyScanner
 
 logger = logging.getLogger(__name__)
 
@@ -72,13 +73,29 @@ class ScanService:
                 self.metadata_repo.update_scan_status(str(scan.id), 'failed')
                 return {'success': False, 'error': 'Failed to extract ZIP'}
 
-            self.metadata_repo.update_scan_status(str(scan.id), 'completed')
+            scanner = DependencyScanner()
+            scan_result = scanner.scan(workspace_path)
+            
+            dep_count = 0
+            if scan_result['dependencies']:
+                dep_count = self.metadata_repo.save_dependencies(
+                    str(scan.id), 
+                    scan_result['dependencies']
+                )
+
+            self.metadata_repo.update_scan_status(
+                str(scan.id), 'completed',
+                total_dependencies=dep_count
+            )
 
             return {
-                'success': True, 
-                'scan_id': str(scan.id), 
-                'project_name': project_name, 
-                'workspace_path': workspace_path
+                'success': True,
+                'scan_id': str(scan.id),
+                'project_name': project_name,
+                'workspace_path': workspace_path,
+                'dependencies_found': dep_count,
+                'ecosystems': scan_result['ecosystems'],
+                'scan_summary': scan_result['summary']
             }
 
         except Exception as e:

@@ -1,8 +1,9 @@
 """
 Module 3 — Dependency Scanner
 
-This module is responsible for detecting the ecosystem and parsing various manifest
-files to extract dependencies.
+Scans project workspaces to detect and parse dependency manifests
+across multiple package manager ecosystems.
 """
-
 from .scanner import DependencyScanner
+
+__all__ = ['DependencyScanner']
