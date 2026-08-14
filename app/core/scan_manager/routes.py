@@ -13,7 +13,8 @@ logger = logging.getLogger(__name__)
 def _get_service() -> ScanService:
     return ScanService(
         upload_folder=current_app.config['UPLOAD_FOLDER'],
-        workspace_folder=current_app.config['WORKSPACE_FOLDER']
+        workspace_folder=current_app.config['WORKSPACE_FOLDER'],
+        results_folder=current_app.config['RESULTS_FOLDER']
     )
 
 @scan_bp.route('/upload', methods=['GET', 'POST'])

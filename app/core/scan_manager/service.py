@@ -16,13 +16,15 @@ from app.core.workspace.manager import WorkspaceManager
 from app.core.cleanup.engine import CleanupEngine
 from app.core.metadata_repo.repository import MetadataRepository
 from app.core.dependency_scanner import DependencyScanner
+from app.core.sbom_generator import SBOMGenerator
 
 logger = logging.getLogger(__name__)
 
 class ScanService:
-    def __init__(self, upload_folder: str, workspace_folder: str):
+    def __init__(self, upload_folder: str, workspace_folder: str, results_folder: str):
         self.upload_folder = upload_folder
         self.workspace_folder = workspace_folder
+        self.results_folder = results_folder
         self.workspace_manager = WorkspaceManager(workspace_folder)
         self.cleanup_engine = CleanupEngine(upload_folder, workspace_folder)
         self.metadata_repo = MetadataRepository()
@@ -82,6 +84,15 @@ class ScanService:
                     str(scan.id), 
                     scan_result['dependencies']
                 )
+                
+                # Generate SBOMs
+                sbom_gen = SBOMGenerator(self.results_folder)
+                
+                cdx_path = sbom_gen.generate(scan_result['dependencies'], str(scan.id), project_name, format='cyclonedx')
+                self.metadata_repo.save_result(str(scan.id), 'sbom', 'cyclonedx', cdx_path)
+                
+                spdx_path = sbom_gen.generate(scan_result['dependencies'], str(scan.id), project_name, format='spdx')
+                self.metadata_repo.save_result(str(scan.id), 'sbom', 'spdx', spdx_path)
 
             self.metadata_repo.update_scan_status(
                 str(scan.id), 'completed',

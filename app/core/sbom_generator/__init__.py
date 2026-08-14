@@ -1,8 +1,9 @@
 """
 Module 4 — SBOM Generator
 
-This module generates Software Bill of Materials (SBOM) in various standard formats
-like CycloneDX and SPDX.
+Generates standard Software Bill of Materials (SBOM) documents
+in CycloneDX and SPDX formats based on discovered dependencies.
 """
-
 from .generator import SBOMGenerator
+
+__all__ = ['SBOMGenerator']

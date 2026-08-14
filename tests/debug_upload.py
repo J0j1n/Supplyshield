@@ -34,7 +34,8 @@ with app.test_client() as client:
     with app.app_context():
         svc = ScanService(
             upload_folder=app.config['UPLOAD_FOLDER'],
-            workspace_folder=app.config['WORKSPACE_FOLDER']
+            workspace_folder=app.config['WORKSPACE_FOLDER'],
+            results_folder=app.config['RESULTS_FOLDER']
         )
 
         # Open file manually

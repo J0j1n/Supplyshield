@@ -1,35 +1,52 @@
 """
-Core generator for SBOMs.
+Module 4 — SBOM Generator: Generator Service
+
+Provides the high-level interface to generate and save SBOMs.
 """
+import os
+import json
+import logging
+from .cyclonedx import CycloneDXBuilder
+from .spdx import SPDXBuilder
+
+logger = logging.getLogger(__name__)
 
 class SBOMGenerator:
-    """
-    Generates SBOMs based on dependency information.
-    """
-    def generate(self, dependencies: list, scan_id: str, format: str = 'cyclonedx') -> str:
+    """Service to generate and export SBOMs."""
+    
+    def __init__(self, output_dir: str):
+        self.output_dir = output_dir
+        os.makedirs(self.output_dir, exist_ok=True)
+        
+    def generate(self, dependencies: list[dict], scan_id: str, project_name: str, format: str = 'cyclonedx') -> str:
         """
-        Generate SBOM in the specified format and return the file path.
+        Generate an SBOM and save it to the output directory.
+        format can be 'cyclonedx' or 'spdx'.
+        Returns the path to the saved SBOM file.
         """
-        # TODO: Implement SBOM generation
-        return f"/tmp/sbom_{scan_id}.json"
-
-    def _generate_cyclonedx(self, dependencies: list, scan_id: str) -> dict:
-        """
-        Generate a CycloneDX SBOM.
-        """
-        # TODO: Implement CycloneDX generation logic
-        return {}
-
-    def _generate_spdx(self, dependencies: list, scan_id: str) -> dict:
-        """
-        Generate an SPDX SBOM.
-        """
-        # TODO: Implement SPDX generation logic
-        return {}
-
-    def export(self, sbom_data: dict, format: str, output_path: str) -> str:
-        """
-        Write SBOM data to a file.
-        """
-        # TODO: Implement file export
-        return output_path
+        metadata = {
+            'scan_id': scan_id,
+            'project_name': project_name
+        }
+        
+        if format.lower() == 'cyclonedx':
+            builder = CycloneDXBuilder()
+            bom_data = builder.build(dependencies, metadata)
+            filename = f"sbom_{scan_id}_cyclonedx.json"
+        elif format.lower() == 'spdx':
+            builder = SPDXBuilder()
+            bom_data = builder.build(dependencies, metadata)
+            filename = f"sbom_{scan_id}_spdx.json"
+        else:
+            raise ValueError(f"Unsupported SBOM format: {format}")
+            
+        output_path = os.path.join(self.output_dir, filename)
+        
+        try:
+            with open(output_path, 'w', encoding='utf-8') as f:
+                json.dump(bom_data, f, indent=2)
+            logger.info(f"Generated {format} SBOM at {output_path}")
+            return output_path
+        except Exception as e:
+            logger.error(f"Failed to write SBOM to {output_path}: {e}")
+            raise

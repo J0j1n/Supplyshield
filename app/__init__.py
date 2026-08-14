@@ -18,6 +18,7 @@ def create_app(config_name='development'):
     # Ensure directories exist
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     os.makedirs(app.config['WORKSPACE_FOLDER'], exist_ok=True)
+    os.makedirs(app.config['RESULTS_FOLDER'], exist_ok=True)
     
     logs_dir = os.path.join(app.root_path, '..', 'logs')
     os.makedirs(logs_dir, exist_ok=True)
