@@ -17,6 +17,7 @@ from app.core.cleanup.engine import CleanupEngine
 from app.core.metadata_repo.repository import MetadataRepository
 from app.core.dependency_scanner import DependencyScanner
 from app.core.sbom_generator import SBOMGenerator
+from app.core.vulnerability import VulnerabilityAnalyzer
 
 logger = logging.getLogger(__name__)
 
@@ -79,6 +80,7 @@ class ScanService:
             scan_result = scanner.scan(workspace_path)
             
             dep_count = 0
+            severity_counts = {'critical': 0, 'high': 0, 'medium': 0, 'low': 0}
             if scan_result['dependencies']:
                 dep_count = self.metadata_repo.save_dependencies(
                     str(scan.id), 
@@ -94,9 +96,39 @@ class ScanService:
                 spdx_path = sbom_gen.generate(scan_result['dependencies'], str(scan.id), project_name, format='spdx')
                 self.metadata_repo.save_result(str(scan.id), 'sbom', 'spdx', spdx_path)
 
+                # Run vulnerability analysis
+                vuln_analyzer = VulnerabilityAnalyzer()
+                vuln_result = vuln_analyzer.analyze(scan_result['dependencies'])
+
+                # Save vulnerabilities to DB per dependency
+                severity_counts = {'critical': 0, 'high': 0, 'medium': 0, 'low': 0}
+                if vuln_result.get('vulnerable_dependencies'):
+                    db_deps = self.metadata_repo.get_dependencies(str(scan.id))
+                    dep_name_to_id = {d.name: d.id for d in db_deps}
+
+                    for vuln_dep in vuln_result['vulnerable_dependencies']:
+                        dep_name = vuln_dep['dependency'].get('name', '')
+                        dep_id = dep_name_to_id.get(dep_name)
+                        if dep_id and vuln_dep.get('vulnerabilities'):
+                            self.metadata_repo.save_vulnerabilities(
+                                dep_id, vuln_dep['vulnerabilities']
+                            )
+
+                    summary = vuln_result.get('severity_summary', {})
+                    severity_counts = {
+                        'critical': summary.get('critical', 0),
+                        'high': summary.get('high', 0),
+                        'medium': summary.get('medium', 0),
+                        'low': summary.get('low', 0)
+                    }
+
             self.metadata_repo.update_scan_status(
                 str(scan.id), 'completed',
-                total_dependencies=dep_count
+                total_dependencies=dep_count,
+                critical_count=severity_counts.get('critical', 0),
+                high_count=severity_counts.get('high', 0),
+                medium_count=severity_counts.get('medium', 0),
+                low_count=severity_counts.get('low', 0)
             )
 
             return {
@@ -106,7 +138,8 @@ class ScanService:
                 'workspace_path': workspace_path,
                 'dependencies_found': dep_count,
                 'ecosystems': scan_result['ecosystems'],
-                'scan_summary': scan_result['summary']
+                'scan_summary': scan_result['summary'],
+                'vulnerabilities': severity_counts
             }
 
         except Exception as e:

@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% block title %}{{ scan.project_name }} — Scan Results{% endblock %}
+
+{% block content %}
+<div class="container py-4 fade-in">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-3 mb-2">
+                <h1 class="mb-0 fw-bold">{{ scan.project_name }}</h1>
+                {% if scan.scan_status == 'completed' %}
+                <span class="status-badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 rounded-pill">Completed</span>
+                {% elif scan.scan_status == 'scanning' %}
+                <span class="status-badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-3 py-1 rounded-pill">Scanning</span>
+                {% elif scan.scan_status == 'failed' %}
+                <span class="status-badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 py-1 rounded-pill">Failed</span>
+                {% else %}
+                <span class="status-badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-3 py-1 rounded-pill">{{ scan.scan_status|title }}</span>
+                {% endif %}
+            </div>
+            <p class="text-muted mb-0 font-monospace small">Scan ID: {{ scan.id[:8] }}... | Scanned: {{ scan.created_at.strftime('%Y-%m-%d %H:%M') if scan.created_at else 'N/A' }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/dashboard/scan/{{ scan.id }}/graph" class="btn btn-outline-light glass-btn d-flex align-items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-diagram-3" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H14a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 2 7h5.5V6A1.5 1.5 0 0 1 6 4.5v-1zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1zM0 11.5A1.5 1.5 0 0 1 1.5 10h1A1.5 1.5 0 0 1 4 11.5v1A1.5 1.5 0 0 1 2.5 14h-1A1.5 1.5 0 0 1 0 12.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm4.5.5A1.5 1.5 0 0 1 7.5 10h1a1.5 1.5 0 0 1 1.5 1.5v1A1.5 1.5 0 0 1 8.5 14h-1A1.5 1.5 0 0 1 6 12.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
+                </svg>
+                View Graph
+            </a>
+            {% if scan.sbom_generated %}
+            <a href="/api/sbom/{{ scan.id }}" class="btn btn-primary d-flex align-items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                </svg>
+                Download SBOM
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="glass-card stats-card h-100 p-4 rounded-4">
+                <div class="text-muted mb-2 text-uppercase small fw-semibold tracking-wider">Dependencies</div>
+                <div class="fs-1 fw-bold text-white">{{ scan.total_dependencies or 0 }}</div>
+                <div class="mt-2 text-muted small">Total analyzed</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-card stats-card h-100 p-4 rounded-4 position-relative overflow-hidden">
+                <div class="position-absolute top-0 start-0 w-100 h-100 bg-danger opacity-10"></div>
+                <div class="text-danger mb-2 text-uppercase small fw-semibold tracking-wider position-relative">Critical Vulnerabilities</div>
+                <div class="fs-1 fw-bold text-white position-relative">{{ scan.critical_count or 0 }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-card stats-card h-100 p-4 rounded-4 position-relative overflow-hidden">
+                <div class="position-absolute top-0 start-0 w-100 h-100 bg-warning opacity-10"></div>
+                <div class="text-warning mb-2 text-uppercase small fw-semibold tracking-wider position-relative" style="color: var(--severity-high) !important;">High Vulnerabilities</div>
+                <div class="fs-1 fw-bold text-white position-relative">{{ scan.high_count or 0 }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-card stats-card h-100 p-4 rounded-4">
+                <div class="text-primary mb-2 text-uppercase small fw-semibold tracking-wider">Total Issues</div>
+                {% set total_issues = (scan.critical_count or 0) + (scan.high_count or 0) + (scan.medium_count or 0) + (scan.low_count or 0) %}
+                <div class="fs-1 fw-bold text-white">{{ total_issues }}</div>
+                <div class="mt-2 text-muted small">Across all severities</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vulnerability Breakdown Bar -->
+    {% if total_issues > 0 %}
+    <div class="glass-card p-4 rounded-4 mb-4">
+        <h5 class="text-white mb-3">Severity Breakdown</h5>
+        <div class="progress severity-bar rounded-pill" style="height: 12px; background: rgba(255,255,255,0.05);">
+            {% if scan.critical_count %}
+            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ (scan.critical_count / total_issues) * 100 }}%" title="Critical: {{ scan.critical_count }}"></div>
+            {% endif %}
+            {% if scan.high_count %}
+            <div class="progress-bar" role="progressbar" style="width: {{ (scan.high_count / total_issues) * 100 }}%; background-color: var(--severity-high);" title="High: {{ scan.high_count }}"></div>
+            {% endif %}
+            {% if scan.medium_count %}
+            <div class="progress-bar" role="progressbar" style="width: {{ (scan.medium_count / total_issues) * 100 }}%; background-color: var(--severity-medium);" title="Medium: {{ scan.medium_count }}"></div>
+            {% endif %}
+            {% if scan.low_count %}
+            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ (scan.low_count / total_issues) * 100 }}%" title="Low: {{ scan.low_count }}"></div>
+            {% endif %}
+        </div>
+        <div class="d-flex justify-content-between mt-2 px-1 text-muted small">
+            <div>{{ scan.critical_count or 0 }} Critical</div>
+            <div>{{ scan.high_count or 0 }} High</div>
+            <div>{{ scan.medium_count or 0 }} Medium</div>
+            <div>{{ scan.low_count or 0 }} Low</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Dependencies Table -->
+    <div class="glass-card overflow-hidden rounded-4 mb-5">
+        <div class="p-4 border-bottom border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-white">Dependencies</h5>
+            <span class="badge bg-secondary rounded-pill">{{ dependencies|length }} Total</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-dark table-hover deps-table mb-0">
+                <thead class="text-uppercase small tracking-wider text-muted">
+                    <tr>
+                        <th scope="col" class="py-3 px-4 fw-medium border-bottom-0">Name</th>
+                        <th scope="col" class="py-3 fw-medium border-bottom-0">Version</th>
+                        <th scope="col" class="py-3 fw-medium border-bottom-0">Ecosystem</th>
+                        <th scope="col" class="py-3 fw-medium border-bottom-0">Type</th>
+                        <th scope="col" class="py-3 px-4 fw-medium border-bottom-0 text-end">Vulnerabilities</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dep in dependencies %}
+                    <tr class="cursor-pointer" {% if dep.vuln_count > 0 %}data-bs-toggle="collapse" data-bs-target="#vulns-{{ dep.id }}"{% endif %}>
+                        <td class="align-middle px-4">
+                            <span class="text-white fw-medium">{{ dep.name }}</span>
+                        </td>
+                        <td class="align-middle text-muted font-monospace small">{{ dep.version }}</td>
+                        <td class="align-middle">
+                            {% if dep.ecosystem %}
+                            <span class="badge bg-secondary bg-opacity-25 text-light border border-secondary border-opacity-25">{{ dep.ecosystem }}</span>
+                            {% else %}
+                            <span class="text-muted small">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="align-middle">
+                            {% if dep.is_direct %}
+                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">Direct</span>
+                            {% else %}
+                            <span class="badge bg-secondary bg-opacity-10 text-muted border border-secondary border-opacity-25">Transitive</span>
+                            {% endif %}
+                        </td>
+                        <td class="align-middle px-4 text-end">
+                            {% if dep.vuln_count > 0 %}
+                            <span class="badge rounded-pill severity-badge bg-{{ 'danger' if dep.max_severity == 'critical' else ('primary' if dep.max_severity == 'low' else 'warning') }}" 
+                                  {% if dep.max_severity == 'high' %}style="background-color: var(--severity-high) !important;"{% endif %}
+                                  {% if dep.max_severity == 'medium' %}style="background-color: var(--severity-medium) !important; color: #000 !important;"{% endif %}>
+                                {{ dep.vuln_count }} Issue{{ 's' if dep.vuln_count > 1 else '' }}
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-chevron-down ms-1" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                </svg>
+                            </span>
+                            {% else %}
+                            <span class="text-success small d-flex align-items-center justify-content-end gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                                </svg>
+                                Clean
+                            </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% if dep.vuln_count > 0 %}
+                    <tr class="collapse bg-dark bg-opacity-50" id="vulns-{{ dep.id }}">
+                        <td colspan="5" class="p-0 border-0">
+                            <div class="p-4 border-top border-secondary border-opacity-10">
+                                <div class="row g-3">
+                                    {% for v in dep.vulnerabilities %}
+                                    <div class="col-md-6">
+                                        <div class="glass-card vuln-card p-3 rounded-3 h-100 border-start border-4 
+                                            {% if v.severity|lower == 'critical' %}border-danger
+                                            {% elif v.severity|lower == 'high' %}border-warning
+                                            {% elif v.severity|lower == 'medium' %}border-warning
+                                            {% else %}border-primary{% endif %}"
+                                            {% if v.severity|lower == 'high' %}style="border-left-color: var(--severity-high) !important;"{% endif %}
+                                            {% if v.severity|lower == 'medium' %}style="border-left-color: var(--severity-medium) !important;"{% endif %}>
+                                            
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <a href="https://nvd.nist.gov/vuln/detail/{{ v.cve_id }}" target="_blank" class="fw-bold text-white text-decoration-none hover-accent">
+                                                    {{ v.cve_id }}
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-box-arrow-up-right ms-1 text-muted" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
+                                                        <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
+                                                    </svg>
+                                                </a>
+                                                <span class="badge rounded-pill severity-badge bg-{{ 'danger' if v.severity|lower == 'critical' else ('primary' if v.severity|lower == 'low' else 'warning') }}"
+                                                    {% if v.severity|lower == 'high' %}style="background-color: var(--severity-high) !important;"{% endif %}
+                                                    {% if v.severity|lower == 'medium' %}style="background-color: var(--severity-medium) !important; color: #000 !important;"{% endif %}>
+                                                    {{ v.severity|title }} {% if v.cvss_score %}({{ v.cvss_score }}){% endif %}
+                                                </span>
+                                            </div>
+                                            <p class="text-muted small mb-2">{{ v.description }}</p>
+                                            <div class="d-flex flex-wrap gap-2 mt-auto">
+                                                {% if v.affected_versions %}
+                                                <span class="badge bg-secondary bg-opacity-10 text-muted border border-secondary border-opacity-25 font-monospace">Affected: {{ v.affected_versions }}</span>
+                                                {% endif %}
+                                                {% if v.fixed_version %}
+                                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 font-monospace">Fixed in: {{ v.fixed_version }}</span>
+                                                {% else %}
+                                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">No fix available</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+.cursor-pointer { cursor: pointer; }
+.hover-accent:hover { color: var(--accent-primary) !important; }
+</style>
+{% endblock %}
