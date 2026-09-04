@@ -46,7 +46,7 @@
                     Your project has been securely uploaded and workspace prepared.
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="{{ url_for('scan.results', scan_id=scan.scan_id) }}" class="btn btn-primary">View Results</a>
+                    <a href="{{ url_for('dashboard.scan_details', scan_id=scan.scan_id) }}" class="btn btn-primary">View Results</a>
                     <form action="{{ url_for('scan.cleanup', scan_id=scan.scan_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to trigger cleanup? This will delete the workspace.');">
                         <button type="submit" class="btn btn-warning">Trigger Cleanup</button>
                     </form>
