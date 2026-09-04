@@ -6,7 +6,7 @@ class BaseConfig:
     """Common configuration settings."""
     SECRET_KEY = os.environ.get('SECRET_KEY', 'default-secret-key-change-in-prod')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 50MB
+    MAX_CONTENT_LENGTH = 600 * 1024 * 1024  # 600MB
     UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
     WORKSPACE_FOLDER = os.path.join(BASE_DIR, 'workspaces')
     RESULTS_FOLDER = os.path.join(BASE_DIR, 'results')

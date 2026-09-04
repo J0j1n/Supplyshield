@@ -11,9 +11,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 ALLOWED_EXTENSIONS = {'zip'}
-MAX_FILE_SIZE = 50 * 1024 * 1024  # 50 MB
-MAX_ZIP_ENTRIES = 10000
-MAX_UNCOMPRESSED_SIZE = 500 * 1024 * 1024  # 500 MB (zip bomb protection)
+MAX_FILE_SIZE = 600 * 1024 * 1024  # 600 MB
+MAX_ZIP_ENTRIES = 100000  # Increased for larger projects
+MAX_UNCOMPRESSED_SIZE = 3 * 1024 * 1024 * 1024  # 3 GB (zip bomb protection)
 MAX_COMPRESSION_RATIO = 100  # If ratio > 100x, likely a zip bomb
 
 def allowed_file(filename: str) -> bool:
