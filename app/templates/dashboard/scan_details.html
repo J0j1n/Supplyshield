@@ -42,29 +42,29 @@
     <!-- Summary Cards -->
     <div class="row g-4 mb-4">
         <div class="col-md-3">
-            <div class="glass-card stats-card h-100 p-4 rounded-4">
-                <div class="text-muted mb-2 text-uppercase small fw-semibold tracking-wider">Dependencies</div>
+            <div class="glass-card stats-card h-100 p-4 rounded-4" style="border-left: 4px solid var(--accent-primary);">
+                <div class="text-uppercase small fw-semibold mb-2" style="color: var(--accent-primary); letter-spacing: 0.05em;">📦 Dependencies</div>
                 <div class="fs-1 fw-bold text-white">{{ scan.total_dependencies or 0 }}</div>
-                <div class="mt-2 text-muted small">Total analyzed</div>
+                <div class="mt-2 text-muted small">Total packages analyzed</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="glass-card stats-card h-100 p-4 rounded-4 position-relative overflow-hidden">
-                <div class="position-absolute top-0 start-0 w-100 h-100 bg-danger opacity-10"></div>
-                <div class="text-danger mb-2 text-uppercase small fw-semibold tracking-wider position-relative">Critical Vulnerabilities</div>
-                <div class="fs-1 fw-bold text-white position-relative">{{ scan.critical_count or 0 }}</div>
+            <div class="glass-card stats-card h-100 p-4 rounded-4" style="border-left: 4px solid var(--severity-critical);">
+                <div class="text-uppercase small fw-semibold mb-2" style="color: var(--severity-critical); letter-spacing: 0.05em;">🔴 Critical</div>
+                <div class="fs-1 fw-bold text-white">{{ scan.critical_count or 0 }}</div>
+                <div class="mt-2 text-muted small">Critical vulnerabilities</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="glass-card stats-card h-100 p-4 rounded-4 position-relative overflow-hidden">
-                <div class="position-absolute top-0 start-0 w-100 h-100 bg-warning opacity-10"></div>
-                <div class="text-warning mb-2 text-uppercase small fw-semibold tracking-wider position-relative" style="color: var(--severity-high) !important;">High Vulnerabilities</div>
-                <div class="fs-1 fw-bold text-white position-relative">{{ scan.high_count or 0 }}</div>
+            <div class="glass-card stats-card h-100 p-4 rounded-4" style="border-left: 4px solid var(--severity-high);">
+                <div class="text-uppercase small fw-semibold mb-2" style="color: var(--severity-high); letter-spacing: 0.05em;">🟠 High</div>
+                <div class="fs-1 fw-bold text-white">{{ scan.high_count or 0 }}</div>
+                <div class="mt-2 text-muted small">High vulnerabilities</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="glass-card stats-card h-100 p-4 rounded-4">
-                <div class="text-primary mb-2 text-uppercase small fw-semibold tracking-wider">Total Issues</div>
+            <div class="glass-card stats-card h-100 p-4 rounded-4" style="border-left: 4px solid var(--severity-medium);">
+                <div class="text-uppercase small fw-semibold mb-2" style="color: var(--severity-medium); letter-spacing: 0.05em;">⚠️ Total Issues</div>
                 {% set total_issues = (scan.critical_count or 0) + (scan.high_count or 0) + (scan.medium_count or 0) + (scan.low_count or 0) %}
                 <div class="fs-1 fw-bold text-white">{{ total_issues }}</div>
                 <div class="mt-2 text-muted small">Across all severities</div>
