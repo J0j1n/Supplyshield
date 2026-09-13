@@ -122,13 +122,19 @@ class ScanService:
                         'low': summary.get('low', 0)
                     }
 
+            # Calculate Trust Score
+            vuln_analyzer = VulnerabilityAnalyzer()
+            trust_score, trust_level = vuln_analyzer.calculate_trust_score(severity_counts)
+
             self.metadata_repo.update_scan_status(
                 str(scan.id), 'completed',
                 total_dependencies=dep_count,
                 critical_count=severity_counts.get('critical', 0),
                 high_count=severity_counts.get('high', 0),
                 medium_count=severity_counts.get('medium', 0),
-                low_count=severity_counts.get('low', 0)
+                low_count=severity_counts.get('low', 0),
+                trust_score=trust_score,
+                trust_level=trust_level
             )
 
             return {
@@ -139,7 +145,9 @@ class ScanService:
                 'dependencies_found': dep_count,
                 'ecosystems': scan_result['ecosystems'],
                 'scan_summary': scan_result['summary'],
-                'vulnerabilities': severity_counts
+                'vulnerabilities': severity_counts,
+                'trust_score': trust_score,
+                'trust_level': trust_level
             }
 
         except Exception as e:

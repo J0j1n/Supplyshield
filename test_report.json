@@ -1,0 +1,475 @@
+[
+  {
+    "project_name": "No Dependencies Project",
+    "dependencies_found": 0,
+    "critical_vulns": 0,
+    "high_vulns": 0,
+    "medium_vulns": 0,
+    "low_vulns": 0,
+    "dependency_details": []
+  },
+  {
+    "project_name": "Up-to-date Project",
+    "dependencies_found": 3,
+    "critical_vulns": 0,
+    "high_vulns": 0,
+    "medium_vulns": 8,
+    "low_vulns": 0,
+    "dependency_details": [
+      {
+        "name": "flask",
+        "version": "3.0.0",
+        "vulnerability_count": 2,
+        "vulnerabilities": [
+          {
+            "cve": "GHSA-68rp-wp8r-4726",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-2151",
+            "severity": "medium"
+          }
+        ]
+      },
+      {
+        "name": "requests",
+        "version": "2.31.0",
+        "vulnerability_count": 6,
+        "vulnerabilities": [
+          {
+            "cve": "GHSA-9hjg-9r4m-mvj7",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-9wx4-h78v-vm56",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-gc5v-m9x4-r6x2",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-1872",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-1873",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-2275",
+            "severity": "medium"
+          }
+        ]
+      },
+      {
+        "name": "pydantic",
+        "version": "2.8.2",
+        "vulnerability_count": 0,
+        "vulnerabilities": []
+      }
+    ]
+  },
+  {
+    "project_name": "Highly Vulnerable Project",
+    "dependencies_found": 4,
+    "critical_vulns": 0,
+    "high_vulns": 0,
+    "medium_vulns": 91,
+    "low_vulns": 0,
+    "dependency_details": [
+      {
+        "name": "django",
+        "version": "1.11",
+        "vulnerability_count": 46,
+        "vulnerabilities": [
+          {
+            "cve": "GHSA-2f9x-5v75-3qv4",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-337x-4q8g-prc5",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-3gh2-xw74-jmcw",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-3h9f-r86x-qvjx",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-5hg3-6c2f-f3wr",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-68w8-qjq3-2gfm",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-6c7v-2f49-8h26",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-6r97-cj55-9hrq",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-6w2r-r2m5-xq5w",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-7rp2-fm2h-wchj",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-7xr5-9hcq-chf9",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-8cjm-8mp7-r2xf",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-8qcx-xf44-272x",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-8x94-hmjh-97hq",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-923m-gv2p-w5qp",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-9r8w-6x8c-6jr9",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-c4qh-4vgv-qc6g",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-crhf-3pfg-w68w",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-frmv-pr5f-9mcr",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-h5jv-4p7w-64jg",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-h7pc-vwp9-298g",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-hmr4-m2h5-33qx",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-qw25-v68c-qjf3",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-r28v-mw67-m5p9",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-rrqc-c2jx-6jgv",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-v9qg-3j8p-r63v",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-vfq6-hq5r-27r6",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-wh4h-v3f2-r2pp",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2017-44",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2018-2",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2018-5",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2018-6",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2019-10",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2019-11",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2019-12",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2019-13",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2019-14",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2019-16",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2019-17",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2019-18",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2019-79",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2020-35",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2020-36",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2021-98",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-1297",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-3717",
+            "severity": "medium"
+          }
+        ]
+      },
+      {
+        "name": "requests",
+        "version": "2.0.0",
+        "vulnerability_count": 13,
+        "vulnerabilities": [
+          {
+            "cve": "GHSA-652x-xj99-gmcc",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-9hjg-9r4m-mvj7",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-9wx4-h78v-vm56",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-cfj3-7x9c-4p3h",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-gc5v-m9x4-r6x2",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-x84v-xcm2-53pg",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2014-13",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2014-14",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2015-17",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2018-28",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-1872",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-1873",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-2275",
+            "severity": "medium"
+          }
+        ]
+      },
+      {
+        "name": "urllib3",
+        "version": "1.24",
+        "vulnerability_count": 24,
+        "vulnerabilities": [
+          {
+            "cve": "GHSA-2xpw-w6gg-jr37",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-34jh-p97f-mpxf",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-38jv-5279-wg99",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-g4mx-q9vg-27p4",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-gm62-xv2j-4w53",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-gwvm-45gx-3cf8",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-mh33-7rrq-662w",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-pq67-6m6q-mj2v",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-qccp-gfcp-xxvc",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-r64q-w8jr-g9qp",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-v845-jxx5-vc9f",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-wqvq-5m8c-6g24",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2019-132",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2019-133",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2020-148",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2023-192",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2023-207",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2023-212",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-141",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-1994",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-1995",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-1996",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-1998",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-1999",
+            "severity": "medium"
+          }
+        ]
+      },
+      {
+        "name": "flask",
+        "version": "0.12",
+        "vulnerability_count": 8,
+        "vulnerabilities": [
+          {
+            "cve": "GHSA-562c-5r94-xh97",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-5wv5-4vpf-pj6m",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-68rp-wp8r-4726",
+            "severity": "medium"
+          },
+          {
+            "cve": "GHSA-m2qf-hxjv-5gpq",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2018-66",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2019-179",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2023-62",
+            "severity": "medium"
+          },
+          {
+            "cve": "PYSEC-2026-2151",
+            "severity": "medium"
+          }
+        ]
+      }
+    ]
+  }
+]

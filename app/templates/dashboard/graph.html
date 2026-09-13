@@ -9,7 +9,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3 px-3">
         <div>
             <h4 class="mb-0 text-white fw-bold">Dependency Graph: {{ scan.project_name }}</h4>
-            <p class="text-muted small mb-0">Force-directed layout of your project dependencies</p>
+            <p class="text-light-emphasis small mb-0">Force-directed layout of your project dependencies</p>
         </div>
         <a href="/dashboard/scan/{{ scan.id }}" class="btn btn-outline-light glass-btn d-flex align-items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
@@ -211,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function() {
             
             if (d.group !== "project") {
                 tooltipHtml += `
-                    <div class="font-monospace text-muted small mb-2">${d.version || 'Unknown version'}</div>
+                    <div class="font-monospace text-light-emphasis small mb-2">${d.version || 'Unknown version'}</div>
                     <div class="d-flex align-items-center gap-2 mb-1 small">
                         <span class="badge bg-secondary bg-opacity-25 border border-secondary border-opacity-25">${d.group}</span>
                     </div>
@@ -243,7 +243,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     `;
                 }
             } else {
-                tooltipHtml += `<div class="small text-muted">Root Project Node</div>`;
+                tooltipHtml += `<div class="small text-light-emphasis">Root Project Node</div>`;
             }
 
             tooltip
