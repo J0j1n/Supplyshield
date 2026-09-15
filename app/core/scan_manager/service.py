@@ -96,6 +96,8 @@ class ScanService:
                 spdx_path = sbom_gen.generate(scan_result['dependencies'], str(scan.id), project_name, format='spdx')
                 self.metadata_repo.save_result(str(scan.id), 'sbom', 'spdx', spdx_path)
 
+                sbom_generated = True
+
                 # Run vulnerability analysis
                 vuln_analyzer = VulnerabilityAnalyzer()
                 vuln_result = vuln_analyzer.analyze(scan_result['dependencies'])
@@ -121,8 +123,10 @@ class ScanService:
                         'medium': summary.get('medium', 0),
                         'low': summary.get('low', 0)
                     }
+            else:
+                sbom_generated = False
 
-            # Calculate Trust Score
+            # Calculate Trust Score (stored for Phase 2, not displayed in Phase 1 UI)
             vuln_analyzer = VulnerabilityAnalyzer()
             trust_score, trust_level = vuln_analyzer.calculate_trust_score(severity_counts)
 
@@ -134,8 +138,23 @@ class ScanService:
                 medium_count=severity_counts.get('medium', 0),
                 low_count=severity_counts.get('low', 0),
                 trust_score=trust_score,
-                trust_level=trust_level
+                trust_level=trust_level,
+                sbom_generated=sbom_generated
             )
+
+            # Auto-cleanup: delete source code after scan completes (privacy guarantee)
+            try:
+                cleanup_result = self.cleanup_engine.cleanup_scan(str(scan.id))
+                if cleanup_result.get('workspace_cleaned') or cleanup_result.get('verified'):
+                    self.metadata_repo.update_scan_status(
+                        str(scan.id), 'completed',
+                        cleanup_completed=True
+                    )
+                    logger.info(f"Auto-cleanup completed for scan {scan.id}")
+                else:
+                    logger.warning(f"Auto-cleanup verification failed for scan {scan.id}")
+            except Exception as cleanup_err:
+                logger.error(f"Auto-cleanup failed for scan {scan.id}: {cleanup_err}")
 
             return {
                 'success': True,

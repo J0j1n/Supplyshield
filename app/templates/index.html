@@ -3,8 +3,8 @@
 {% block content %}
 <div class="hero-section text-center py-5 rounded-3 mb-5">
     <h1 class="display-4 fw-bold">SupplyShield</h1>
-    <h2 class="h4 mb-3">AI-Powered Software Supply Chain Trust Platform</h2>
-    <p class="lead mb-4">Privacy-First. Evidence-Based. Explainable.</p>
+    <h2 class="h4 mb-3" style="color: #cbd5e1;">Software Supply Chain Security Platform</h2>
+    <p class="lead mb-4" style="color: #94a3b8;">Privacy-First &bull; Evidence-Based &bull; Transparent</p>
     <div class="d-flex justify-content-center gap-3">
         <a href="/scan/upload" class="btn btn-primary btn-lg">Start Scan</a>
         <a href="/dashboard" class="btn btn-outline-light btn-lg">View Dashboard</a>
@@ -13,60 +13,47 @@
 
 <div class="row g-4 mb-5">
     <div class="col-md-6 col-lg-3">
-        <div class="card h-100 feature-card">
-            <div class="card-body">
-                <h5 class="card-title">🔍 Dependency Analysis</h5>
-                <p class="card-text">Scan Python, npm, Maven, Gradle, Cargo, and Poetry projects</p>
-            </div>
+        <div class="glass-card h-100 p-4 text-center">
+            <div class="fs-1 mb-3">&#x1f50d;</div>
+            <h5 class="text-white">Dependency Analysis</h5>
+            <p class="small" style="color: #94a3b8;">Scan Python, npm, Maven, Gradle, Cargo, and Poetry projects</p>
         </div>
     </div>
     <div class="col-md-6 col-lg-3">
-        <div class="card h-100 feature-card">
-            <div class="card-body">
-                <h5 class="card-title">🛡️ Vulnerability Detection</h5>
-                <p class="card-text">Cross-reference NVD, GitHub Advisories, and OSV databases</p>
-            </div>
+        <div class="glass-card h-100 p-4 text-center">
+            <div class="fs-1 mb-3">&#x1f6e1;&#xfe0f;</div>
+            <h5 class="text-white">Vulnerability Detection</h5>
+            <p class="small" style="color: #94a3b8;">Cross-reference NVD, GitHub Advisories, and OSV databases</p>
         </div>
     </div>
     <div class="col-md-6 col-lg-3">
-        <div class="card h-100 feature-card">
-            <div class="card-body">
-                <h5 class="card-title">📋 SBOM Generation</h5>
-                <p class="card-text">Generate CycloneDX and SPDX compliant SBOMs</p>
-            </div>
+        <div class="glass-card h-100 p-4 text-center">
+            <div class="fs-1 mb-3">&#x1f4cb;</div>
+            <h5 class="text-white">SBOM Generation</h5>
+            <p class="small" style="color: #94a3b8;">Generate CycloneDX and SPDX compliant Software Bill of Materials</p>
         </div>
     </div>
     <div class="col-md-6 col-lg-3">
-        <div class="card h-100 feature-card">
-            <div class="card-body">
-                <h5 class="card-title">🔒 Privacy First</h5>
-                <p class="card-text">Zero source code retention. Your code never stays on our servers</p>
-            </div>
+        <div class="glass-card h-100 p-4 text-center">
+            <div class="fs-1 mb-3">&#x1f512;</div>
+            <h5 class="text-white">Privacy First</h5>
+            <p class="small" style="color: #94a3b8;">Zero source code retention. Your code is deleted after analysis</p>
         </div>
     </div>
 </div>
 
-<div class="trust-index-section text-center mb-5">
-    <h3 class="mb-4">Supply Chain Trust Index (STI)</h3>
-    <div class="d-flex justify-content-center flex-wrap gap-2">
-        <span class="badge trust-badge trust-badge-enterprise fs-6">Enterprise (A)</span>
-        <span class="badge trust-badge trust-badge-trusted fs-6">Trusted (B)</span>
-        <span class="badge trust-badge trust-badge-moderate fs-6">Moderate (C)</span>
-        <span class="badge trust-badge trust-badge-high-risk fs-6">High Risk (D)</span>
-        <span class="badge trust-badge trust-badge-critical fs-6">Critical (F)</span>
-    </div>
-</div>
-
-<div class="how-it-works-section text-center mb-5">
-    <h3 class="mb-4">How it works</h3>
-    <div class="d-flex justify-content-center align-items-center flex-wrap gap-3">
+<div class="text-center mb-5">
+    <h3 class="mb-4 text-white">How It Works</h3>
+    <div class="d-flex justify-content-center align-items-center flex-wrap gap-3" style="color: #cbd5e1;">
         <span class="fw-bold">Upload</span>
         <span>&rarr;</span>
-        <span class="fw-bold">Scan</span>
+        <span class="fw-bold">Scan Dependencies</span>
         <span>&rarr;</span>
-        <span class="fw-bold">Analyze</span>
+        <span class="fw-bold">Analyze Vulnerabilities</span>
         <span>&rarr;</span>
-        <span class="fw-bold">Report</span>
+        <span class="fw-bold">Generate SBOM</span>
+        <span>&rarr;</span>
+        <span class="fw-bold">Security Report</span>
         <span>&rarr;</span>
         <span class="fw-bold text-success">Delete Source Code</span>
     </div>

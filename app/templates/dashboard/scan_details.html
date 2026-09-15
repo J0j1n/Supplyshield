@@ -1,100 +1,82 @@
 {% extends 'base.html' %}
-{% block title %}{{ scan.project_name }} — Scan Results{% endblock %}
+{% block title %}{{ scan.project_name }} &mdash; Scan Results &mdash; SupplyShield{% endblock %}
 
 {% block content %}
 <div class="container py-4 fade-in">
-    <!-- Header -->
+
+    <!-- ============ SCAN HEADER ============ -->
     <div class="d-flex justify-content-between align-items-start mb-4">
         <div>
             <div class="d-flex align-items-center gap-3 mb-2">
                 <h1 class="mb-0 fw-bold">{{ scan.project_name }}</h1>
                 {% if scan.scan_status == 'completed' %}
-                <span class="status-badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 rounded-pill">Completed</span>
+                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 rounded-pill">Completed</span>
                 {% elif scan.scan_status == 'scanning' %}
-                <span class="status-badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-3 py-1 rounded-pill">Scanning</span>
+                <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-3 py-1 rounded-pill">Scanning</span>
                 {% elif scan.scan_status == 'failed' %}
-                <span class="status-badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 py-1 rounded-pill">Failed</span>
+                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 py-1 rounded-pill">Failed</span>
                 {% else %}
-                <span class="status-badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-3 py-1 rounded-pill">{{ scan.scan_status|title }}</span>
+                <span class="badge bg-secondary bg-opacity-10 border border-secondary border-opacity-25 px-3 py-1 rounded-pill" style="color: #94a3b8;">{{ scan.scan_status|title }}</span>
                 {% endif %}
             </div>
-            <p class="mb-0 font-monospace small" style="color: #cbd5e1;">Scan ID: {{ scan.id[:8] }}... | Scanned: {{ scan.created_at.strftime('%Y-%m-%d %H:%M') if scan.created_at else 'N/A' }}</p>
+            <div class="d-flex flex-wrap gap-3 small" style="color: #94a3b8;">
+                <span class="font-monospace">Scan ID: {{ scan.id[:8] }}...</span>
+                <span>Scanned: {{ scan.created_at.strftime('%Y-%m-%d %H:%M') if scan.created_at else 'N/A' }}</span>
+                {% if primary_ecosystem %}
+                <span>{{ primary_ecosystem|title }}</span>
+                {% endif %}
+                {% if scan_duration %}
+                <span>Duration: {{ scan_duration }}s</span>
+                {% endif %}
+            </div>
         </div>
-        <div class="d-flex gap-2">
-            <a href="/dashboard/scan/{{ scan.id }}/graph" class="btn btn-outline-light glass-btn d-flex align-items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H14a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 2 7h5.5V6A1.5 1.5 0 0 1 6 4.5v-1z"/></svg>
-                View Graph
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="/dashboard/scan/{{ scan.id }}/graph" class="btn btn-outline-light glass-btn btn-sm d-flex align-items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H14a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 2 7h5.5V6A1.5 1.5 0 0 1 6 4.5v-1z"/></svg>
+                Dependency Graph
             </a>
-            {% if scan.sbom_generated %}
-            <a href="/api/sbom/{{ scan.id }}" class="btn btn-primary d-flex align-items-center gap-2">Download SBOM</a>
-            {% endif %}
+            <a href="/dashboard/scan/{{ scan.id }}/sbom" class="btn btn-outline-light glass-btn btn-sm">View SBOM</a>
+            <a href="/dashboard/scan/{{ scan.id }}/report" class="btn btn-primary btn-sm">Download Report</a>
         </div>
     </div>
 
-    <!-- ============ TRUST SCORE ============ -->
-    {% set score = scan.trust_score if scan.trust_score is not none else 100 %}
-    {% set level = scan.trust_level or 'A' %}
-    {% if level == 'A' %}
-        {% set score_color = '#22c55e' %}
-        {% set level_label = 'Excellent' %}
-    {% elif level == 'B' %}
-        {% set score_color = '#3b82f6' %}
-        {% set level_label = 'Good' %}
-    {% elif level == 'C' %}
-        {% set score_color = '#f59e0b' %}
-        {% set level_label = 'Fair' %}
-    {% elif level == 'D' %}
-        {% set score_color = '#f97316' %}
-        {% set level_label = 'Poor' %}
+    <!-- ============ SECURITY RISK OVERVIEW ============ -->
+    {% if risk_level == 'CRITICAL' %}
+        {% set risk_color = '#ef4444' %}
+        {% set risk_bg = 'rgba(239,68,68,0.08)' %}
+    {% elif risk_level == 'HIGH' %}
+        {% set risk_color = '#f97316' %}
+        {% set risk_bg = 'rgba(249,115,22,0.08)' %}
+    {% elif risk_level == 'MODERATE' %}
+        {% set risk_color = '#eab308' %}
+        {% set risk_bg = 'rgba(234,179,8,0.08)' %}
+    {% elif risk_level == 'LOW' %}
+        {% set risk_color = '#3b82f6' %}
+        {% set risk_bg = 'rgba(59,130,246,0.08)' %}
     {% else %}
-        {% set score_color = '#ef4444' %}
-        {% set level_label = 'Critical Risk' %}
+        {% set risk_color = '#22c55e' %}
+        {% set risk_bg = 'rgba(34,197,94,0.08)' %}
     {% endif %}
-    <div class="glass-card rounded-4 p-4 mb-4">
+
+    <div class="glass-card rounded-4 p-4 mb-4" style="border-left: 4px solid {{ risk_color }}; background: {{ risk_bg }};">
         <div class="row align-items-center">
-            <div class="col-auto">
-                <div class="position-relative" style="width: 140px; height: 140px;">
-                    <svg viewBox="0 0 140 140" width="140" height="140">
-                        <circle cx="70" cy="70" r="58" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
-                        <circle cx="70" cy="70" r="58" fill="none"
-                                stroke="{{ score_color }}" stroke-width="10"
-                                stroke-linecap="round"
-                                stroke-dasharray="{{ (score / 100) * 364.42 }} 364.42"
-                                transform="rotate(-90 70 70)"
-                                style="transition: stroke-dasharray 1s ease;"/>
-                    </svg>
-                    <div class="position-absolute top-50 start-50 translate-middle text-center">
-                        <div class="fw-bold text-white" style="font-size: 2rem; line-height: 1;">{{ score | int }}</div>
-                        <div style="font-size: 0.65rem; color: #94a3b8;">/ 100</div>
-                    </div>
-                </div>
-            </div>
             <div class="col">
-                <div class="d-flex align-items-center gap-3 mb-1">
-                    <h4 class="mb-0 text-white fw-bold">Trust Score</h4>
-                    <span class="badge rounded-pill px-3 py-2 fw-semibold" style="background-color: {{ score_color }}; font-size: 0.85rem;">
-                        Grade {{ level }} &mdash; {{ level_label }}
+                <div class="text-uppercase small fw-semibold mb-2" style="color: #94a3b8; letter-spacing: 0.08em;">Security Risk Overview</div>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="badge rounded-pill px-3 py-2 fw-bold" style="background-color: {{ risk_color }}; font-size: 0.95rem;">
+                        {% if risk_level == 'NONE' %}NO RISK{% else %}{{ risk_level }} RISK{% endif %}
+                    </span>
+                    <span class="fw-semibold text-white" style="font-size: 1.1rem;">
+                        {{ total_vulns }} Known Vulnerabilit{{ 'y' if total_vulns == 1 else 'ies' }}
                     </span>
                 </div>
-                <p class="small mb-2 mt-2" style="color: #cbd5e1;">
-                    {% if level == 'A' %}
-                        This project's dependencies are well-maintained with no known vulnerabilities. Safe for production.
-                    {% elif level == 'B' %}
-                        Generally trusted but has some low or medium severity issues. Review recommended.
-                    {% elif level == 'C' %}
-                        Moderate risk with high-severity or numerous medium vulnerabilities. Update before deployment.
-                    {% elif level == 'D' %}
-                        High-risk due to critical vulnerabilities. Immediate remediation required.
-                    {% else %}
-                        Extremely vulnerable with multiple critical issues. Do NOT use in production.
-                    {% endif %}
-                </p>
-                <div class="d-flex gap-4 small" style="color: #cbd5e1;">
+                <div class="d-flex gap-4 small">
                     <span style="color: #fca5a5;">{{ scan.critical_count or 0 }} Critical</span>
                     <span style="color: #fdba74;">{{ scan.high_count or 0 }} High</span>
                     <span style="color: #fde047;">{{ scan.medium_count or 0 }} Medium</span>
                     <span style="color: #93c5fd;">{{ scan.low_count or 0 }} Low</span>
                 </div>
+                <p class="small mb-0 mt-2" style="color: #94a3b8;">Based on known vulnerability findings in analyzed dependencies.</p>
             </div>
         </div>
     </div>
@@ -102,78 +84,103 @@
     <!-- ============ SUMMARY CARDS ============ -->
     <div class="row g-4 mb-4">
         <div class="col-md-3">
-            <div class="glass-card stats-card h-100 p-4 rounded-4" style="border-left: 4px solid var(--accent-primary); background: rgba(99,102,241,0.08);">
-                <div class="text-uppercase small fw-semibold mb-2" style="color: #a5b4fc; letter-spacing: 0.05em;">&#x1f4e6; Dependencies</div>
+            <div class="glass-card stats-card h-100 p-4 rounded-4" style="border-left: 4px solid var(--accent-primary); background: rgba(99,102,241,0.06);">
+                <div class="text-uppercase small fw-semibold mb-2" style="color: #a5b4fc; letter-spacing: 0.05em;">Dependencies</div>
                 <div class="fs-1 fw-bold text-white">{{ scan.total_dependencies or 0 }}</div>
-                <div class="mt-2 small" style="color: #cbd5e1;">Total packages analyzed</div>
+                <div class="mt-2 small" style="color: #94a3b8;">Total dependencies analyzed</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="glass-card stats-card h-100 p-4 rounded-4" style="border-left: 4px solid var(--severity-critical); background: rgba(239,68,68,0.08);">
-                <div class="text-uppercase small fw-semibold mb-2" style="color: #fca5a5; letter-spacing: 0.05em;">&#x1f534; Critical</div>
-                <div class="fs-1 fw-bold text-white">{{ scan.critical_count or 0 }}</div>
-                <div class="mt-2 small" style="color: #cbd5e1;">Critical vulnerabilities</div>
+            <div class="glass-card stats-card h-100 p-4 rounded-4" style="border-left: 4px solid {{ risk_color }}; background: {{ risk_bg }};">
+                <div class="text-uppercase small fw-semibold mb-2" style="color: #fca5a5; letter-spacing: 0.05em;">Known Vulnerabilities</div>
+                <div class="fs-1 fw-bold text-white">{{ total_vulns }}</div>
+                <div class="mt-2 small" style="color: #94a3b8;">Across analyzed dependencies</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="glass-card stats-card h-100 p-4 rounded-4" style="border-left: 4px solid var(--severity-high); background: rgba(249,115,22,0.08);">
-                <div class="text-uppercase small fw-semibold mb-2" style="color: #fdba74; letter-spacing: 0.05em;">&#x1f7e0; High</div>
-                <div class="fs-1 fw-bold text-white">{{ scan.high_count or 0 }}</div>
-                <div class="mt-2 small" style="color: #cbd5e1;">High vulnerabilities</div>
+            <div class="glass-card stats-card h-100 p-4 rounded-4" style="border-left: 4px solid #f97316; background: rgba(249,115,22,0.06);">
+                <div class="text-uppercase small fw-semibold mb-2" style="color: #fdba74; letter-spacing: 0.05em;">Critical / High</div>
+                <div class="fs-1 fw-bold text-white">{{ scan.critical_count or 0 }} / {{ scan.high_count or 0 }}</div>
+                <div class="mt-2 small" style="color: #94a3b8;">Highest severity findings</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="glass-card stats-card h-100 p-4 rounded-4" style="border-left: 4px solid var(--severity-medium); background: rgba(234,179,8,0.08);">
-                <div class="text-uppercase small fw-semibold mb-2" style="color: #fde047; letter-spacing: 0.05em;">&#x26a0;&#xfe0f; Total Issues</div>
-                {% set total_issues = (scan.critical_count or 0) + (scan.high_count or 0) + (scan.medium_count or 0) + (scan.low_count or 0) %}
-                <div class="fs-1 fw-bold text-white">{{ total_issues }}</div>
-                <div class="mt-2 small" style="color: #cbd5e1;">Across all severities</div>
+            <div class="glass-card stats-card h-100 p-4 rounded-4" style="border-left: 4px solid var(--accent-primary); background: rgba(99,102,241,0.06);">
+                <div class="text-uppercase small fw-semibold mb-2" style="color: #a5b4fc; letter-spacing: 0.05em;">SBOM</div>
+                {% if scan.sbom_generated %}
+                <div class="fs-4 fw-bold text-success">Generated &#x2713;</div>
+                <div class="mt-1 small" style="color: #94a3b8;">CycloneDX &bull; {{ sbom_component_count }} components</div>
+                {% else %}
+                <div class="fs-4 fw-bold" style="color: #94a3b8;">Not Generated</div>
+                <div class="mt-1 small" style="color: #64748b;">No dependencies detected</div>
+                {% endif %}
             </div>
         </div>
     </div>
 
     <!-- ============ SEVERITY BREAKDOWN ============ -->
-    {% if total_issues > 0 %}
+    {% if total_vulns > 0 %}
     <div class="glass-card p-4 rounded-4 mb-4">
         <h5 class="text-white mb-3">Severity Breakdown</h5>
         <div class="progress severity-bar rounded-pill" style="height: 12px; background: rgba(255,255,255,0.05);">
             {% if scan.critical_count %}
-            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ (scan.critical_count / total_issues) * 100 }}%"></div>
+            <div class="progress-bar" role="progressbar" style="width: {{ (scan.critical_count / total_vulns) * 100 }}%; background-color: var(--severity-critical);"></div>
             {% endif %}
             {% if scan.high_count %}
-            <div class="progress-bar" role="progressbar" style="width: {{ (scan.high_count / total_issues) * 100 }}%; background-color: var(--severity-high);"></div>
+            <div class="progress-bar" role="progressbar" style="width: {{ (scan.high_count / total_vulns) * 100 }}%; background-color: var(--severity-high);"></div>
             {% endif %}
             {% if scan.medium_count %}
-            <div class="progress-bar" role="progressbar" style="width: {{ (scan.medium_count / total_issues) * 100 }}%; background-color: var(--severity-medium);"></div>
+            <div class="progress-bar" role="progressbar" style="width: {{ (scan.medium_count / total_vulns) * 100 }}%; background-color: var(--severity-medium);"></div>
             {% endif %}
             {% if scan.low_count %}
-            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ (scan.low_count / total_issues) * 100 }}%"></div>
+            <div class="progress-bar" role="progressbar" style="width: {{ (scan.low_count / total_vulns) * 100 }}%; background-color: var(--severity-low);"></div>
             {% endif %}
         </div>
-        <div class="d-flex justify-content-between mt-2 px-1 small" style="color: #cbd5e1;">
-            <div>{{ scan.critical_count or 0 }} Critical</div>
-            <div>{{ scan.high_count or 0 }} High</div>
-            <div>{{ scan.medium_count or 0 }} Medium</div>
-            <div>{{ scan.low_count or 0 }} Low</div>
+        <div class="row mt-3 g-3">
+            <div class="col-3">
+                <div class="d-flex align-items-center gap-2">
+                    <div style="width: 12px; height: 12px; border-radius: 3px; background: var(--severity-critical);"></div>
+                    <span class="small" style="color: #cbd5e1;">Critical: <strong class="text-white">{{ scan.critical_count or 0 }}</strong></span>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="d-flex align-items-center gap-2">
+                    <div style="width: 12px; height: 12px; border-radius: 3px; background: var(--severity-high);"></div>
+                    <span class="small" style="color: #cbd5e1;">High: <strong class="text-white">{{ scan.high_count or 0 }}</strong></span>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="d-flex align-items-center gap-2">
+                    <div style="width: 12px; height: 12px; border-radius: 3px; background: var(--severity-medium);"></div>
+                    <span class="small" style="color: #cbd5e1;">Medium: <strong class="text-white">{{ scan.medium_count or 0 }}</strong></span>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="d-flex align-items-center gap-2">
+                    <div style="width: 12px; height: 12px; border-radius: 3px; background: var(--severity-low);"></div>
+                    <span class="small" style="color: #cbd5e1;">Low: <strong class="text-white">{{ scan.low_count or 0 }}</strong></span>
+                </div>
+            </div>
         </div>
     </div>
     {% endif %}
 
     <!-- ============ DEPENDENCIES TABLE ============ -->
-    <div class="glass-card overflow-hidden rounded-4 mb-5">
+    <div class="glass-card overflow-hidden rounded-4 mb-4">
         <div class="p-4 border-bottom border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
             <h5 class="mb-0 text-white">Dependencies</h5>
             <span class="badge bg-secondary rounded-pill">{{ dependencies|length }} Total</span>
         </div>
         <div class="table-responsive">
             <table class="table table-dark table-hover deps-table mb-0">
-                <thead class="text-uppercase small tracking-wider" style="color: #94a3b8;">
+                <thead class="text-uppercase small" style="color: #94a3b8;">
                     <tr>
                         <th scope="col" class="py-3 px-4 fw-medium border-bottom-0">Name</th>
                         <th scope="col" class="py-3 fw-medium border-bottom-0">Version</th>
                         <th scope="col" class="py-3 fw-medium border-bottom-0">Ecosystem</th>
                         <th scope="col" class="py-3 fw-medium border-bottom-0">Type</th>
-                        <th scope="col" class="py-3 px-4 fw-medium border-bottom-0 text-end">Vulnerabilities</th>
+                        <th scope="col" class="py-3 fw-medium border-bottom-0">Vulnerabilities</th>
+                        <th scope="col" class="py-3 px-4 fw-medium border-bottom-0 text-end">Security Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -182,12 +189,12 @@
                         <td class="align-middle px-4">
                             <span class="text-white fw-medium">{{ dep.name }}</span>
                         </td>
-                        <td class="align-middle font-monospace small" style="color: #cbd5e1;">{{ dep.version }}</td>
+                        <td class="align-middle font-monospace small" style="color: #cbd5e1;">{{ dep.version or '-' }}</td>
                         <td class="align-middle">
                             {% if dep.ecosystem %}
-                            <span class="badge bg-secondary bg-opacity-25 text-light border border-secondary border-opacity-25">{{ dep.ecosystem }}</span>
+                            <span class="badge bg-secondary bg-opacity-25 border border-secondary border-opacity-25" style="color: #cbd5e1;">{{ dep.ecosystem }}</span>
                             {% else %}
-                            <span class="small" style="color: #94a3b8;">-</span>
+                            <span class="small" style="color: #64748b;">-</span>
                             {% endif %}
                         </td>
                         <td class="align-middle">
@@ -197,62 +204,80 @@
                             <span class="badge bg-secondary bg-opacity-10 border border-secondary border-opacity-25" style="color: #94a3b8;">Transitive</span>
                             {% endif %}
                         </td>
+                        <td class="align-middle" style="color: #cbd5e1;">
+                            {% if dep.vuln_count > 0 %}
+                            <span>{{ dep.vuln_count }}</span>
+                            {% else %}
+                            <span style="color: #64748b;">0</span>
+                            {% endif %}
+                        </td>
                         <td class="align-middle px-4 text-end">
                             {% if dep.vuln_count > 0 %}
-                            <span class="badge rounded-pill severity-badge bg-{{ 'danger' if dep.max_severity == 'critical' else ('primary' if dep.max_severity == 'low' else 'warning') }}"
-                                  {% if dep.max_severity == 'high' %}style="background-color: var(--severity-high) !important;"{% endif %}
-                                  {% if dep.max_severity == 'medium' %}style="background-color: var(--severity-medium) !important; color: #000 !important;"{% endif %}>
-                                {{ dep.vuln_count }} Issue{{ 's' if dep.vuln_count > 1 else '' }}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-chevron-down ms-1" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-                                </svg>
+                            <span class="badge rounded-pill px-2 py-1" style="background-color: {{ '#ef4444' if dep.max_severity == 'critical' else ('#f97316' if dep.max_severity == 'high' else ('#eab308' if dep.max_severity == 'medium' else '#3b82f6')) }}; {{ 'color: #000;' if dep.max_severity == 'medium' else '' }}">
+                                Vulnerable
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="ms-1" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>
                             </span>
                             {% else %}
-                            <span class="text-success small d-flex align-items-center justify-content-end gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16">
-                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                                    <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
-                                </svg>
-                                Clean
-                            </span>
+                            <span class="text-success small">&#x2713; Clean</span>
                             {% endif %}
                         </td>
                     </tr>
+                    <!-- Expanded Vulnerability Detail -->
                     {% if dep.vuln_count > 0 %}
-                    <tr class="collapse bg-dark bg-opacity-50" id="vulns-{{ dep.id }}">
-                        <td colspan="5" class="p-0 border-0">
-                            <div class="p-4 border-top border-secondary border-opacity-10">
+                    <tr class="collapse" id="vulns-{{ dep.id }}">
+                        <td colspan="6" class="p-0 border-0">
+                            <div class="p-4" style="background: rgba(255,255,255,0.02);">
+                                <!-- Dependency Detail Header -->
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h6 class="text-white mb-1">{{ dep.name }} <span class="font-monospace small" style="color: #94a3b8;">{{ dep.version }}</span></h6>
+                                        <div class="small" style="color: #94a3b8;">
+                                            {{ dep.ecosystem or 'Unknown' }} &bull; {{ 'Direct' if dep.is_direct else 'Transitive' }} Dependency
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="small" style="color: #cbd5e1;">{{ dep.vuln_count }} Known Vulnerabilit{{ 'y' if dep.vuln_count == 1 else 'ies' }}</div>
+                                    </div>
+                                </div>
+
+                                <!-- Individual Vulnerabilities -->
                                 <div class="row g-3">
                                     {% for v in dep.vulnerabilities %}
                                     <div class="col-md-6">
-                                        <div class="glass-card vuln-card p-3 rounded-3 h-100 border-start border-4
-                                            {% if v.severity|lower == 'critical' %}border-danger
-                                            {% elif v.severity|lower == 'high' %}border-warning
-                                            {% elif v.severity|lower == 'medium' %}border-warning
-                                            {% else %}border-primary{% endif %}"
-                                            {% if v.severity|lower == 'high' %}style="border-left-color: var(--severity-high) !important;"{% endif %}
-                                            {% if v.severity|lower == 'medium' %}style="border-left-color: var(--severity-medium) !important;"{% endif %}>
-
+                                        <div class="glass-card p-3 rounded-3 h-100" style="border-left: 3px solid {{ '#ef4444' if v.severity == 'critical' else ('#f97316' if v.severity == 'high' else ('#eab308' if v.severity == 'medium' else '#3b82f6')) }};">
                                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                                <a href="https://nvd.nist.gov/vuln/detail/{{ v.cve_id }}" target="_blank" class="fw-bold text-white text-decoration-none hover-accent">
-                                                    {{ v.cve_id }}
-                                                </a>
-                                                <span class="badge rounded-pill severity-badge bg-{{ 'danger' if v.severity|lower == 'critical' else ('primary' if v.severity|lower == 'low' else 'warning') }}"
-                                                    {% if v.severity|lower == 'high' %}style="background-color: var(--severity-high) !important;"{% endif %}
-                                                    {% if v.severity|lower == 'medium' %}style="background-color: var(--severity-medium) !important; color: #000 !important;"{% endif %}>
-                                                    {{ v.severity|title }} {% if v.cvss_score %}({{ v.cvss_score }}){% endif %}
+                                                <span class="fw-bold text-white small">{{ v.cve_id }}</span>
+                                                <span class="badge rounded-pill px-2 py-1" style="background-color: {{ '#ef4444' if v.severity == 'critical' else ('#f97316' if v.severity == 'high' else ('#eab308' if v.severity == 'medium' else '#3b82f6')) }}; font-size: 0.7rem; {{ 'color: #000;' if v.severity == 'medium' else '' }}">
+                                                    {{ v.severity|title }}{% if v.cvss_score %} ({{ v.cvss_score }}){% endif %}
                                                 </span>
                                             </div>
-                                            <p class="small mb-2" style="color: #cbd5e1;">{{ v.description }}</p>
-                                            <div class="d-flex flex-wrap gap-2 mt-auto">
+                                            {% if v.description %}
+                                            <p class="small mb-2" style="color: #cbd5e1;">{{ v.description[:200] }}{% if v.description|length > 200 %}...{% endif %}</p>
+                                            {% endif %}
+                                            <div class="d-flex flex-wrap gap-2 mb-2">
                                                 {% if v.affected_versions %}
-                                                <span class="badge bg-secondary bg-opacity-10 border border-secondary border-opacity-25 font-monospace" style="color: #94a3b8;">Affected: {{ v.affected_versions }}</span>
+                                                <span class="badge bg-secondary bg-opacity-10 border border-secondary border-opacity-25 font-monospace" style="color: #94a3b8; font-size: 0.7rem;">Affected: {{ v.affected_versions }}</span>
                                                 {% endif %}
                                                 {% if v.fixed_version %}
-                                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 font-monospace">Fixed in: {{ v.fixed_version }}</span>
+                                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 font-monospace" style="font-size: 0.7rem;">Fixed: {{ v.fixed_version }}</span>
                                                 {% else %}
-                                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">No fix available</span>
+                                                <span class="badge bg-secondary bg-opacity-10 border border-secondary border-opacity-25" style="color: #94a3b8; font-size: 0.7rem;">Fixed version: Not available</span>
                                                 {% endif %}
+                                            </div>
+                                            <!-- Source -->
+                                            <div class="small" style="color: #64748b;">
+                                                Source: {{ v.source|upper if v.source else 'OSV' }}
+                                            </div>
+                                            <!-- Recommendation -->
+                                            <div class="mt-2 p-2 rounded" style="background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.15);">
+                                                <div class="small fw-semibold" style="color: #a5b4fc;">Recommended Action</div>
+                                                <div class="small" style="color: #cbd5e1;">
+                                                    {% if v.fixed_version %}
+                                                    Upgrade {{ dep.name }} from {{ dep.version }} to {{ v.fixed_version }} or later.
+                                                    {% else %}
+                                                    Upgrade this dependency to a non-affected version when a fixed release is available.
+                                                    {% endif %}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -267,10 +292,97 @@
             </table>
         </div>
     </div>
+
+    <!-- ============ SCAN INFORMATION ============ -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="glass-card p-4 rounded-4 h-100">
+                <h5 class="text-white mb-3">Scan Information</h5>
+                <table class="table table-sm mb-0" style="color: #cbd5e1;">
+                    <tbody>
+                        <tr>
+                            <td class="border-0 py-2" style="color: #94a3b8; width: 40%;">Scan ID</td>
+                            <td class="border-0 py-2 font-monospace small">{{ scan.id }}</td>
+                        </tr>
+                        <tr>
+                            <td class="border-0 py-2" style="color: #94a3b8;">Start Time</td>
+                            <td class="border-0 py-2">{{ scan.created_at.strftime('%Y-%m-%d %H:%M:%S') if scan.created_at else 'N/A' }}</td>
+                        </tr>
+                        <tr>
+                            <td class="border-0 py-2" style="color: #94a3b8;">Completion Time</td>
+                            <td class="border-0 py-2">{{ scan.completed_at.strftime('%Y-%m-%d %H:%M:%S') if scan.completed_at else 'N/A' }}</td>
+                        </tr>
+                        {% if scan_duration %}
+                        <tr>
+                            <td class="border-0 py-2" style="color: #94a3b8;">Duration</td>
+                            <td class="border-0 py-2">{{ scan_duration }} seconds</td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td class="border-0 py-2" style="color: #94a3b8;">Dependencies Found</td>
+                            <td class="border-0 py-2">{{ scan.total_dependencies or 0 }}</td>
+                        </tr>
+                        <tr>
+                            <td class="border-0 py-2" style="color: #94a3b8;">SBOM Status</td>
+                            <td class="border-0 py-2">
+                                {% if scan.sbom_generated %}
+                                <span class="text-success">Generated &#x2713;</span>
+                                {% else %}
+                                <span style="color: #94a3b8;">Not generated</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="border-0 py-2" style="color: #94a3b8;">Scan Status</td>
+                            <td class="border-0 py-2">{{ scan.scan_status|title }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ============ PRIVACY PROTECTION ============ -->
+        <div class="col-md-6">
+            <div class="glass-card p-4 rounded-4 h-100">
+                <h5 class="text-white mb-3">Privacy Protection</h5>
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex align-items-start gap-2">
+                        <span class="text-success">&#x2713;</span>
+                        <div>
+                            <div style="color: #cbd5e1;">Source code processed in temporary workspace</div>
+                            <div class="small" style="color: #64748b;">Isolated workspace created for analysis</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-2">
+                        {% if scan.cleanup_completed %}
+                        <span class="text-success">&#x2713;</span>
+                        <div>
+                            <div style="color: #cbd5e1;">Source code deleted after scan</div>
+                            <div class="small" style="color: #64748b;">Workspace securely cleaned up</div>
+                        </div>
+                        {% else %}
+                        <span style="color: #eab308;">&#x26a0;</span>
+                        <div>
+                            <div style="color: #eab308;">Source code cleanup pending</div>
+                            <div class="small" style="color: #64748b;">Automatic cleanup may still be in progress</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex align-items-start gap-2">
+                        <span class="text-success">&#x2713;</span>
+                        <div>
+                            <div style="color: #cbd5e1;">Security metadata retained</div>
+                            <div class="small" style="color: #64748b;">Only scan results and reports are stored</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <style>
 .cursor-pointer { cursor: pointer; }
-.hover-accent:hover { color: var(--accent-primary) !important; }
 </style>
 {% endblock %}

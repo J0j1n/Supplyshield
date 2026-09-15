@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}Dashboard &mdash; SupplyShield{% endblock %}
+{% block title %}Scan History &mdash; SupplyShield{% endblock %}
 
 {% block content %}
 <div class="container py-4 fade-in">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="mb-0 fw-bold">Security Dashboard</h1>
-            <p class="mb-0" style="color: #cbd5e1;">Total Scans: <span class="badge bg-secondary rounded-pill">{{ scans|length }}</span></p>
+            <h1 class="mb-0 fw-bold">Scan History</h1>
+            <p class="mb-0" style="color: #cbd5e1;">All previous security scans</p>
         </div>
         <a href="/scan/upload" class="btn btn-primary d-flex align-items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
@@ -22,32 +22,43 @@
             <table class="table table-dark table-hover deps-table mb-0">
                 <thead class="text-uppercase small" style="color: #94a3b8;">
                     <tr>
-                        <th scope="col" class="py-3 px-4 fw-medium">Project</th>
+                        <th scope="col" class="py-3 px-4 fw-medium">#</th>
+                        <th scope="col" class="py-3 fw-medium">Project</th>
+                        <th scope="col" class="py-3 fw-medium">Date</th>
                         <th scope="col" class="py-3 fw-medium">Status</th>
-                        <th scope="col" class="py-3 fw-medium">Risk Level</th>
                         <th scope="col" class="py-3 fw-medium">Dependencies</th>
                         <th scope="col" class="py-3 fw-medium">Vulnerabilities</th>
-                        <th scope="col" class="py-3 fw-medium">Date</th>
+                        <th scope="col" class="py-3 fw-medium">Risk</th>
                         <th scope="col" class="py-3 px-4 fw-medium text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for scan in scans %}
                     <tr>
-                        <td class="align-middle px-4">
+                        <td class="align-middle px-4" style="color: #94a3b8;">{{ loop.index }}</td>
+                        <td class="align-middle">
                             <a href="/dashboard/scan/{{ scan.id }}" class="text-decoration-none fw-semibold text-white">
                                 {{ scan.project_name }}
                             </a>
                         </td>
+                        <td class="align-middle small" style="color: #cbd5e1;">
+                            {{ scan.created_at.strftime('%b %d, %Y %H:%M') if scan.created_at else 'N/A' }}
+                        </td>
                         <td class="align-middle">
                             {% if scan.scan_status == 'completed' %}
                             <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">Completed</span>
-                            {% elif scan.scan_status == 'scanning' %}
-                            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1">Scanning</span>
                             {% elif scan.scan_status == 'failed' %}
                             <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1">Failed</span>
                             {% else %}
                             <span class="badge bg-secondary bg-opacity-10 border border-secondary border-opacity-25 px-2 py-1" style="color: #94a3b8;">{{ scan.scan_status|title }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="align-middle" style="color: #cbd5e1;">{{ scan.total_dependencies or 0 }}</td>
+                        <td class="align-middle">
+                            {% if scan.total_vulnerabilities > 0 %}
+                            <span style="color: #fca5a5;">{{ scan.total_vulnerabilities }}</span>
+                            {% else %}
+                            <span class="text-success">0</span>
                             {% endif %}
                         </td>
                         <td class="align-middle">
@@ -63,22 +74,8 @@
                             <span class="badge rounded-pill px-2 py-1" style="background-color: #22c55e;">None</span>
                             {% endif %}
                         </td>
-                        <td class="align-middle" style="color: #cbd5e1;">{{ scan.total_dependencies or 0 }}</td>
-                        <td class="align-middle">
-                            {% if scan.total_vulnerabilities > 0 %}
-                            <span style="color: #fca5a5;">{{ scan.total_vulnerabilities }}</span>
-                            {% else %}
-                            <span class="text-success">0</span>
-                            {% endif %}
-                        </td>
-                        <td class="align-middle small" style="color: #94a3b8;">
-                            {{ scan.created_at.strftime('%Y-%m-%d %H:%M') if scan.created_at else 'N/A' }}
-                        </td>
                         <td class="align-middle text-end px-4">
-                            <div class="btn-group">
-                                <a href="/dashboard/scan/{{ scan.id }}" class="btn btn-sm btn-outline-secondary glass-btn">Details</a>
-                                <a href="/dashboard/scan/{{ scan.id }}/graph" class="btn btn-sm btn-outline-secondary glass-btn">Graph</a>
-                            </div>
+                            <a href="/dashboard/scan/{{ scan.id }}" class="btn btn-sm btn-outline-secondary glass-btn">View Results</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -88,9 +85,9 @@
     </div>
     {% else %}
     <div class="empty-state glass-card p-5 text-center mt-4 rounded-4">
-        <div class="fs-1 mb-3">&#x1f6e1;&#xfe0f;</div>
-        <h4 class="text-white">No scans yet</h4>
-        <p class="mb-4" style="color: #cbd5e1;">Start by uploading a project for security analysis.</p>
+        <div class="fs-1 mb-3">&#x1f4c2;</div>
+        <h4 class="text-white">No scan history</h4>
+        <p class="mb-4" style="color: #cbd5e1;">Run your first security scan to start building history.</p>
         <a href="/scan/upload" class="btn btn-primary">Run First Scan</a>
     </div>
     {% endif %}

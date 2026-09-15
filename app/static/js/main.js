@@ -20,18 +20,7 @@ function initDependencyGraph(containerId, graphData) {
     // D3 logic goes here
 }
 
-/**
- * Format Trust Score to HTML badge
- */
-function formatTrustScore(score) {
-    const s = score.toUpperCase();
-    if (s === 'A') return '<span class="badge trust-badge trust-badge-enterprise">Enterprise</span>';
-    if (s === 'B') return '<span class="badge trust-badge trust-badge-trusted">Trusted</span>';
-    if (s === 'C') return '<span class="badge trust-badge trust-badge-moderate">Moderate</span>';
-    if (s === 'D') return '<span class="badge trust-badge trust-badge-high-risk">High Risk</span>';
-    if (s === 'F') return '<span class="badge trust-badge trust-badge-critical">Critical</span>';
-    return '<span class="badge bg-secondary">Unknown</span>';
-}
+// Trust Score formatting removed — Phase 2 feature (not displayed in Phase 1 UI)
 
 /**
  * Poll scan status
